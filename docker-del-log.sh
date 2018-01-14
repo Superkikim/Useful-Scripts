@@ -66,7 +66,7 @@ else
 fi
 
 # Ask for user confirmation
-read -p "Container $dockername has ID #$container_id. Delete the log ? " -n 1 -r
+read -p "Container $dockername has ID #$container_id. Delete the log ? " yn
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
     rm -f $logpath
