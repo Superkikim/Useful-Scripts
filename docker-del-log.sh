@@ -41,7 +41,7 @@ fi
 container_id=`echo $(docker container inspect hass | jq -r '.[]."Id"';printf '%s\n')`
 
 # Check if docker exists
-exists=?(echo $container_id | wc -l)
+exists=$(echo $container_id | wc -l)
 if [[ $exist -eq "0" ]]
 then
     echo The container $dockername does has not been found. Exiting...
