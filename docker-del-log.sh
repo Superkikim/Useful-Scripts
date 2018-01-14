@@ -39,11 +39,11 @@ fi
 
 # Check if docker exists
 exists=$(arr=( $(docker container inspect hass | jq -r '.[]."Id"') );printf '%s\n' "${arr[@]}" | wc -l)
-if [ $exist -eq "0" ]
+if [[ $exist -eq "0" ]]
 then
     echo The container $dockername does has not been found. Exiting...
     exit 1
-elif [ $exist -gt "1" ]
+elif [[ $exist -gt "1" ]]
 then
     echo Something weird happened. More than one container with the name $dockername have been found... Exiting...
     exit 1
@@ -71,7 +71,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]
 then
     rm -f $logpath
     success=$?
-    if [ $success -eq "0" ]
+    if [[ $success -eq "0" ]]
         echo "File successfully deleted"
         exit 0
     else
