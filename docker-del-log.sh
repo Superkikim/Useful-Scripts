@@ -42,11 +42,11 @@ container_id=`echo $(docker container inspect hass | jq -r '.[]."Id"';printf '%s
 
 # Check if docker exists
 exists=$(echo $container_id | wc -l)
-if [[ $exist -eq "0" ]]
+if [ $exists -eq "0" ]
 then
     echo The container $dockername does has not been found. Exiting...
     exit 1
-elif [[ $exist -gt "1" ]]
+elif [ $exists -gt "1" ]
 then
     echo Something weird happened. More than one container with the name $dockername have been found... Exiting...
     exit 1
