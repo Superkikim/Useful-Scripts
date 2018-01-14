@@ -37,8 +37,11 @@ then
 exit 1
 fi
 
+#Parse container ID
+container_id=`echo $(docker container inspect hass | jq -r '.[]."Id"';printf '%s\n')`
+
 # Check if docker exists
-exists=$($(docker container inspect hass | jq -r '.[]."Id"') );printf '%s\n' "${arr[@]}" | wc -l)
+exists=?(echo $container_id | wc -l)
 if [[ $exist -eq "0" ]]
 then
     echo The container $dockername does has not been found. Exiting...
@@ -48,9 +51,6 @@ then
     echo Something weird happened. More than one container with the name $dockername have been found... Exiting...
     exit 1
 fi
-
-# Parse container Id
-container_id=$(docker container inspect $dockername | jq -r '.[]."Id"') );printf '%s\n' "${arr[@]}"
 
 # Set log path variable
 logpath="/var/lib/docker/containers/$container_id/$container_id-json.log"
