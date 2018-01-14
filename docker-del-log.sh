@@ -38,7 +38,7 @@ exit 1
 fi
 
 # Check if docker exists
-exists=$(arr=( $(docker container inspect hass | jq -r '.[]."Id"') );printf '%s\n' "${arr[@]}" | wc -l)
+exists=$($(docker container inspect hass | jq -r '.[]."Id"') );printf '%s\n' "${arr[@]}" | wc -l)
 if [[ $exist -eq "0" ]]
 then
     echo The container $dockername does has not been found. Exiting...
