@@ -24,11 +24,11 @@
 #    ~/.github
 #
 # Usage:
-#    ./git-create.sh <repo name> <type>
+#    ./git-create.sh [repo name] [type]
 #
-#    <repo name>  required: Repositery name. Must follow Github repository
+#    [repo name]  required: Repositery name. Must follow Github repository
 #                 name requirements
-#    <type>       optional: private or public. Default is private
+#    [type]       optional: private or public. Default is private
 #
 # Example:
 #
@@ -67,7 +67,7 @@ else
         private="false"
         ;;
       *)
-        echo "<type> parameter not recognized. Exiting."
+        echo "[type] parameter not recognized. Exiting."
         exit 1
    esac
 fi
