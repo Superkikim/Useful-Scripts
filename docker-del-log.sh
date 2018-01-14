@@ -20,7 +20,7 @@
 #
 #    Below example will delete the log for a container called hass
 #
-#    ./docker-del-log.sh hass
+#    sudo ./docker-del-log.sh hass
 #
 #
 ###############################################################################
@@ -72,6 +72,7 @@ then
     rm -f $logpath
     success=$?
     if [[ $success -eq "0" ]]
+    then
         echo "File successfully deleted"
         exit 0
     else
