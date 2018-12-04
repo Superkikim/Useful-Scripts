@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<unattend xmlns="urn:schemas-microsoft-com:unattend">
+   <settings pass="specialize">
+      <component xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+         <ComputerName>as-snow-win02</ComputerName>
+      </component>
+      <component xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Microsoft-Windows-ServerManager-SvrMgrNc" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+         <DoNotOpenServerManagerAtLogon>true</DoNotOpenServerManagerAtLogon>
+      </component>
+      <component xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Microsoft-Windows-TerminalServices-LocalSessionManager" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+         <fDenyTSConnections>false</fDenyTSConnections>
+      </component>
+      <component xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Networking-MPSSVC-Svc" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+         <DomainProfile_EnableFirewall>false</DomainProfile_EnableFirewall>
+         <PrivateProfile_EnableFirewall>false</PrivateProfile_EnableFirewall>
+         <PublicProfile_EnableFirewall>false</PublicProfile_EnableFirewall>
+      </component>
+      <component xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Microsoft-Windows-TCPIP" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+         <Interfaces>
+            <Interface wcm:action="add">
+               <Identifier>Ethernet</Identifier>
+               <Ipv4Settings>
+                  <DhcpEnabled>true</DhcpEnabled>
+                  <RouterDiscoveryEnabled>true</RouterDiscoveryEnabled>
+                  <Metric>30</Metric>
+               </Ipv4Settings>
+               <Routes>
+               </Routes>
+            </Interface>
+         </Interfaces>
+      </component>
+      <component xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Microsoft-Windows-DNS-Client" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+         <DNSSuffixSearchOrder>
+            <DomainName wcm:action="add" wcm:keyValue="1">cloud.local</DomainName>
+         </DNSSuffixSearchOrder>
+         <Interfaces>
+            <Interface wcm:action="add">
+               <DNSServerSearchOrder>
+               </DNSServerSearchOrder>
+               <Identifier>Ethernet</Identifier>
+               <DisableDynamicUpdate>false</DisableDynamicUpdate>
+               <DNSDomain>nutanix.demo</DNSDomain>
+               <EnableAdapterDomainNameRegistration>true</EnableAdapterDomainNameRegistration>
+            </Interface>
+         </Interfaces>
+         <DNSDomain>nutanix.demo</DNSDomain>
+      </component>
+   </settings>
+   <settings pass="oobeSystem">
+      <component xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+         <UserAccounts>
+            <AdministratorPassword>
+               <Value>nutanix/4u</Value>
+               <PlainText>true</PlainText>
+            </AdministratorPassword>
+            <LocalAccounts>
+               <LocalAccount wcm:action="add">
+                  <Password>
+                     <Value>nutanix/4u</Value>
+                     <PlainText>true</PlainText>
+                  </Password>
+                  <Description>Local Admin Account</Description>
+                  <DisplayName>Super Admin Account</DisplayName>
+                  <Group>Administrators</Group>
+                  <Name>nutanix</Name>
+               </LocalAccount>
+            </LocalAccounts>
+         </UserAccounts>
+         <OOBE>
+            <HideEULAPage>true</HideEULAPage>
+            <NetworkLocation>Work</NetworkLocation>
+            <SkipMachineOOBE>true</SkipMachineOOBE>
+            <SkipUserOOBE>true</SkipUserOOBE>
+         </OOBE>
+      </component>
+      <component xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Microsoft-Windows-International-Core" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+         <InputLocale>040c:0000040c</InputLocale>
+         <SystemLocale>en-US</SystemLocale>
+         <UILanguage>en-US</UILanguage>
+         <UserLocale>en-US</UserLocale>
+      </component>
+   </settings>
+</unattend>
