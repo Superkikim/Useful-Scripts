@@ -1,0 +1,6 @@
+#cloud-config
+users:
+  - name: mikadolab
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDCwDnK5vDTatAA/38arTcQbipA18GPyPKC7Ff3iQcC8McESLLEnnSqOJzIlMz+xlTkVlPmhryMsbPmwmblwUfa9wt/zg6C6w4m6cPhX+BokV0jZ2RdMg14LMEtwmEiEODBnHsSY6sbSrDSm2eObtigCnFDCSNq9R+mS/JsomiZOHwrTuMevQK5owxp6ErimfTBYJ8SdEGy9lbPflL1+ihvRdAi5GSgIwAfzwkR0B2jQpys+o6gIkKpO+HQIDQYmkVlhwUY0MQQIXr3Ik11EB5wSNqzxmXgHOcpj2OwvmWAL5KjZkDjUVnTlZ3impjbl/CsbX6n1nELgyNHoOy+cvSQ01NnKgfDYWYP/ga9NEmlzlpEUZ9PKQvIIXxWJCoBMGT+M07hgZKuAS2yaLRR41LUpB2jBrzon9O4F/VQfAh5GR8GZWtxWyK+H8rz+68SbYWR92qdu9AvYZgh1qIXx8Mr19DhhIzAvdn4FP81C5SLYNl7s5DxMe3n5k5prlCL4svUpQcR/6zC4KPOcIGRtwWtQCaA9B3cKdxbMKuDo6/s8Tl6HpUUKZT8jwcACI22VocdmAFdGDLVYyYOBS0JV76OIB1wQMkTZqiRWLgbdzLYpT01G9z7ie7mrsdY3UzznpvDzNLQCXsggycrrUge1X0g272rd/iRKF4kD7UTaolopw== mikadolab
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
