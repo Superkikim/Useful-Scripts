@@ -9,12 +9,14 @@ from requests.auth import HTTPBasicAuth
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 argument="@@{platform.metadata.uuid}@@"
+pc_user="@@{pc_user}@@"
+pc_password="@@{pc_password}@@"
 
 # Get cluster UUID
 try:
     url = "https://localhost:9440/api/nutanix/v3/vms/" + argument
 
-    myResponse = requests.get(url,auth=HTTPBasicAuth('akim@nutanix.demo','nutanix/4u'), verify=False)
+    myResponse = requests.get(url,auth=HTTPBasicAuth(pc_user,pc_password), verify=False)
 
     if(myResponse.ok):
 
@@ -33,7 +35,7 @@ except Exception as error:
 try:
     url = "https://localhost:9440/api/nutanix/v3/clusters/" + uuid
 
-    myResponse = requests.get(url,auth=HTTPBasicAuth('akim@nutanix.demo','nutanix/4u'), verify=False)
+    myResponse = requests.get(url,auth=HTTPBasicAuth(pc_user,pc_password), verify=False)
 
     if(myResponse.ok):
 
