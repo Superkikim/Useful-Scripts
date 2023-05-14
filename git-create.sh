@@ -6,125 +6,138 @@
 # Website: https://akim.sissaoui.com/informatique
 #
 # Description:
-#    This script ease the github repository creation
-#    It will create a github folder in your home folder if it does not exist
-#    Then it will create a new folder based on $1 variable, make it a git 
-#    repo and create a github repository on your github account. $2 allow you
-#    to specify public or private.
+#    This script simplifies the creation of a GitHub repository.
+#    If not already present, it will create a "github" directory in the home folder.
+#    Subsequently, it will create a new directory based on the user-provided name,
+#    initialize it as a git repository, and create a corresponding GitHub repository.
+#    User can choose to create a private or public repository.
 #
-# Requirement:
-#    This scripts use SSH to retrieve your github username, therefore,
-#    authentication via SSH to github according to following URL is required:
-#
-#  https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/
-#
-#    An API token has been generated from https://github.com/settings/tokens and
-#    added into textfile. Token needs admin tree permissions
-#
-#    ~/.github
+# Requirements:
+#    1. SSH authentication to GitHub as described at:
+#       https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/
+#    2. A GitHub API token generated from https://github.com/settings/tokens
+#       (with admin tree permissions) and stored in the ~/.github file.
 #
 # Usage:
-#    ./git-create.sh [repo name] [type]
+#    ./git-create.sh <repo_name> <repo_type>
 #
-#    [repo name]  required: Repositery name. Must follow Github repository
-#                 name requirements
-#    [type]       optional: private or public. Default is private
+#    <repo_name>  required: Repository name adhering to GitHub's naming convention.
+#    <repo_type>  required: Can be "private" or "public".
 #
-# Example:
-#
-#    Below example will create MyApp Github repository as private
-#
-#    ./git-create.sh MyApp private
-#
-#
-#    Below example will create MyCreation Github repository as public
-#
-#    ./git-create.sh MyCreation public
+# Examples:
+#    1. Create a private GitHub repository named "MyApp":
+#       ./git-create.sh MyApp private
+#    2. Create a public GitHub repository named "MyCreation":
+#       ./git-create.sh MyCreation public
 #
 ###############################################################################
 
+print_help() {
+    echo "Usage: ./git-create.sh <repo_name> <repo_type>"
+    echo
+    echo "<repo_name>  required: Repository name adhering to GitHub's naming convention."
+    echo "<repo_type>  required: Can be 'private' or 'public'."
+    echo
+    echo "Examples:"
+    echo "1. Create a private GitHub repository named 'MyApp':"
+    echo "   ./git-create.sh MyApp private"
+    echo "2. Create a public GitHub repository named 'MyCreation':"
+    echo "   ./git-create.sh MyCreation public"
+}
+
+pre_reqs() {
+    error_message=""
+    # Check if required parameters are provided
+    if [ -z "$reponame" ]
+    then
+      error_message+="Error: Repository name is required.\n"
+    fi
+
+    if [ -z "$repo_type" ]
+    then
+      error_message+="Error: Repository type is required.\n"
+    fi
+
+    # Check if the required files exist
+    if [ ! -f ~/.github ]
+    then
+      error_message+="Error: ~/.github file does not exist.\n"
+    fi
+
+    if [ ! -f ~/.ssh/github.key ]
+    then
+      error_message+="Error: ~/.ssh/github.key file does not exist.\n"
+    fi
+
+    # Test the ssh authentication
+    git_user=$(ssh -i ~/.ssh/github.key -T git@github.com -o "StrictHostKeyChecking no" 2>&1 > /dev/null)
+    if [[ $git_user != *"successfully"* ]]
+    then
+      error_message+="Error: SSH authentication failed. Please verify SSH authentication.\n"
+    fi
+
+    git_user=$(echo $git_user | sed -e 's/.*Hi //' -e 's/You.*//')
+
+    # Check if repository already exists
+    if curl -s -H "Authorization: token $(cat ~/.github)" "https://api.github.com/repos/$git_user/$reponame" | grep -q "\"not found\""
+    then
+      error_message+="Error: Repository $reponame already exists.\n"
+    fi
+
+   
+    # Check if local directory already exists
+    if [ -d ~/github/$reponame ]
+    then
+      error_message+="Error: Directory ~/github/$reponame already exists.\n"
+    fi
+
+    # Return error message if any error occurred
+    if [ ! -z "$error_message" ]
+    then
+      echo -e $error_message
+      exit 1
+    fi
+}
+
+create_repo() {
+    private="true"
+    if [ "$repo_type" = "public" ]; then
+      private="false"
+    fi
+
+    # Ensure the presence of ~/github directory
+    mkdir -p ~/github
+
+    # Create local directory and initialize it as a git repository
+    mkdir -p ~/github/$reponame && cd "$_"
+    git init > /dev/null 2>&1
+
+
+    # Create remote repository
+    curl -H "Authorization: token $(cat ~/.github)" https://api.github.com/user/repos -d "{\"name\":\"$reponame\",\"private\":\"$private\"}"
+
+    # Add the remote repository
+    git remote add origin https://github.com/$git_user/$reponame.git
+
+    echo "Successfully created the repository $reponame in ~/github/$reponame and as a remote repository at https://github.com/$git_user/$reponame"
+    if [ "$private" = "true" ]
+    then
+       echo "This is a private repository."
+    fi 
+    echo
+    echo "You can now add files, commit, and push to populate the remote repository."
+    echo
+    exit 0
+}
+
 # Parse parameters
 reponame=$1
-private=$2
+repo_type=$2
 
-# Check reponame
-if [ -z $reponame ]
-then
-	echo "Repository name is required. Exiting"
-exit 1
+if [[ "$1" = "--help" ]]; then
+    print_help
+    exit 0
 fi
 
-# Define if private or public
-if [ -z $private ]
-then
-   private="true"
-else
-   case $private in
-      private)
-	private="true"
-        ;;
-      public)
-        private="false"
-        ;;
-      *)
-        echo "[type] parameter not recognized. Exiting."
-        exit 1
-   esac
-fi
-
-# Create github folder in the current user home folder if it does not exist
-if [ ! -d ~/github ]; then
-  mkdir ~/github
-fi
-
-# Test the ssh authentication and save the result in the $git_user variable
-git_user=$(ssh -T git@github.com -o "StrictHostKeyChecking no" 2>&1 > /dev/null)
-
-# Verify if ssh connection was successfull
-success=`grep -c successfully <<< "$git_user"`
-
-# If ssh connection was successful, parse username otherwise exit with exit code 1
-if [ $success -eq 1 ]
-then
-	git_user=`echo $git_user | sed -e 's/.*Hi //' -e 's/You.*//'`
-	git_user=${git_user%??}
-else
-	echo "ssh authentication failed. Please verify ssh authentication."
-	exit 1
-fi
-
-# Check if repository exists
-for repo in $(curl -s -H "Authorization: token `cat ~/.github`" https://api.github.com/user/repos | grep -o 'git@[^"]*' | grep .git)
-do
-        if [ $reponame = $(echo $repo | sed -e 's/.*\///' -e 's/.git.*//') ]
-        then
-                echo "Repository with name $reponame already exists. Exiting."
-                exit 1
-        fi
-done
-
-# Check if local folder already exit
-if [ -d ~/github/$reponame ]
-then
-   echo "Folder ~/github/$reponame already exist. Exiting."
-   exit 1
-fi
-
-# Create local folder repository
-mkdir ~/github/$reponame
-cd ~/github/$reponame
-git init
-
-# Create remote repository
-curl -H "Authorization: token `cat ~/.github`" https://api.github.com/user/repos -d "{\"name\":\"$reponame\",\"private\":$private}"
-git remote add origin https://github.com/$git_user/$reponame.git
-
-echo "Repository $reponame has been created in ~/github/$reponame and as remote repository at https://github.com/$git_user/$reponame"
-if [ $private = "true" ]
-then
-   echo "This is a private repository."
-fi 
-echo
-echo "You can now add files, commit and push to populate the remote repository"
-echo
-exit 0
+pre_reqs
+create_repo
